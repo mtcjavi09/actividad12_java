@@ -33,25 +33,35 @@ public class addressBook
     //save: guarda los cambios en el archivo
     public void save() throws Exception
     {
-        String archivo = "contactos.csv";
-        String [] titulos = {"Contacto", "Teléfono", "Fecha de creación"};
+        String ARCHIVO = "contactos.csv";
         try
         {
-            boolean existe = new File(archivo).exists(); //Se verifica si existe el archivo
+            boolean existe = new File(ARCHIVO).exists(); //Se verifica si existe el archivo
             //Si existe el archivo se borra
             if (existe)
             {
-                File archivoUsuarios = new File(archivo);
+                File archivoUsuarios = new File(ARCHIVO);
                 archivoUsuarios.delete();
             }
             
             
-            CsvWriter writer = new CsvWriter(new FileWriter(archivo, true), ',');
+            CsvWriter writer = new CsvWriter(new FileWriter(ARCHIVO, true), ',');
             
-            writer.writeRecord(titulos);
-                      
+            writer.write("Contacto");
+            writer.write("Teléfono");
+            writer.write("Fecha de creación");                     
             writer.endRecord();
             
+            for (Object x : contactos.values())
+            {
+                contact y = (contact) x;
+                writer.write(y.getName());
+                writer.write(y.getPhone());
+                writer.write(y.getDate());
+                writer.endRecord();
+            }
+            
+            writer.close();
             
         }
         catch(Exception e)
@@ -59,25 +69,26 @@ public class addressBook
     }
     
     //list: muestra los contactos de la agenda
-    public String list() throws Exception
+    public void list() throws Exception
+    {
+        
+    }
+    
+    //create: crea un nuevo contacto
+    public String create(int cantidadContactos) throws Exception
     {
         //Variables necesarias para el método
         String nombre; //Guarda el nombre del contacto
         String telefono; //Guarda el teléfono del contacto
         String fecha; //Guarda la fecha de creación del contacto
-        int cantidadContactos; //Variable que maneja el ciclo do ... while
         int intentos = 3; //Especifica el número de equivocaciones permitidas
-                
+
         //Se especifica el manejo de excepciones try ... catch
         //Se intenta la ejecución de las siguientes instrucciones
         try
-        {
-            //Se pide al usuario cuántos contactos desea ingresar
-            cantidadContactos = Integer.parseInt(JOptionPane.showInputDialog(
-                    "Ingresa el número de contactos que deseas agregar"));
-            
+        {   
             //Se repiten las siguientes instrucciones hasta completar el número de contactos deseados
-            for (int x = 0; x == cantidadContactos; x++)
+            for (int x = 0; x < cantidadContactos; x++)
             {
                 //Se pide al usuario el nombre de contacto
                 nombre = JOptionPane.showInputDialog("Ingresa el nombre de tu contacto:");
@@ -96,35 +107,30 @@ public class addressBook
                                 + "intenta nuevamente\n" + "Te quedan " + intentos + " intentos",
                                 "Teléfono no válido", JOptionPane.ERROR_MESSAGE);
                     }
+                    
+                    //Si el usuario se acabó sus intentos disponibles, lanza una excepción
+                    if (intentos == 0)
+                    {throw new Exception("La cantidad de errores permitida ha sido superada.");}
+
                 }
-                //Si no se acabó los intentos y llenó el campo, se finaliza el ciclo
-                while(intentos != 0 && telefono.length() == 10); 
+                //Si llenó el teléfono de forma correcta, se termina el ciclo
+                while(telefono.length() != 10); 
                 
-                //Si el usuario se acabó sus intentos disponibles, lanza una excepción
-                if (intentos == 0)
-                {throw new Exception("La cantidad de errores permitida ha sido superada.");}
                 
                 //Se guarda la fecha exacta de creación del contacto
                 fecha = LocalDate.now().toString();
                 
                 //Se crea el objeto de tipo contact
-                contact contact = new contact(nombre,telefono,fecha);
+                contact contact = new contact(nombre, telefono, fecha);
                 
                 //Se guarda el objeto en el HashMap
-                contactos.put(telefono,contact);
-                                
+                contactos.put(telefono, contact);
             }
             
-            return "Contactos ingresados correctamente";
+            return "Se agregaron " + contactos.size() + " contactos correctamente";
         }
         catch(Exception e)
         {throw new Exception("Datos ingresados no compatibles");}
-    }
-    
-    //create: crea un nuevo contacto
-    public void crate() throws Exception
-    {
-        
     }
     
     //delete: elimina un contacto

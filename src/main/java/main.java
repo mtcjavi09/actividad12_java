@@ -18,9 +18,15 @@ public class main
         try
         {
             addressBook contactos = new addressBook();
+            //Se pide al usuario cuántos contactos desea ingresar
+            int cantidadContactos = Integer.parseInt(JOptionPane.showInputDialog(
+                    "Ingresa el número de contactos que deseas agregar: "));
+            String mensaje = contactos.create(cantidadContactos);
             contactos.save();
+            
+            System.out.println(mensaje + "\n");
         }
         catch(Exception e)
-        {}
+        {System.out.println("Se terminó el programa por la excepción: " + e + "");}
     }
 }
