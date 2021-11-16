@@ -5,15 +5,13 @@
     Programa para guardar contactos en una agenda telefónica.
  */
 
-//Se importan las librerías necesarias para el correcto funcionamiento de la clase
-import java.time.LocalDate; //Para permitir que el atributo sea de tipo fecha
-
 public class contact 
 {
     //Atributos de la clase
     private String name; //Guarda el nombre del contacto
     private String phone; //Guarda el teléfono del contacto
     private String date; //Guarda la fecha de creación del contacto
+    private String hour; //Guarda la hora de creación del contacto
     
     //Métodos get y set para los atributos privados
     public String getName() {return name;}
@@ -22,13 +20,16 @@ public class contact
     public void setPhone(String phone) {this.phone = phone;}
     public String getDate() {return date;}
     public void setDate(String date) {this.date = date;}
+    public String getHour() {return hour;}
+    public void setHour(String hour) {this.hour = hour;}
     
     
     //Constructor para creación del objeto usando Hash Map
-    public contact(String name, String phone, String date) 
+    public contact(String name, String phone, String date, String hour) 
     {
         this.name = name;
         this.phone = phone;
         this.date = date;
+        this.hour = hour;
     }  
 }
