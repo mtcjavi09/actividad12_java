@@ -22,11 +22,14 @@ public class main
             String nombreUsuario;
             //intentos: le dará al usuario tres intentos para no dejar en blanco su nombre
             int intentos = 3;
+            //directorio: objeto que ayudará a acceder a los métodos de la clase addressBook
+            addressBook directorio = new addressBook();
+                
             //Se crea un ciclo para que el usuario ingrese su nombre de forma correcta
             do
             {
                 //Se pide el nombre del usuario
-                nombreUsuario = JOptionPane.showInputDialog("Bienvenid@ al calculador de áreas\n"
+                nombreUsuario = JOptionPane.showInputDialog("Bienvenid@ al directorio de contactos\n"
                     + "Por favor, escribe tu nombre:");
                 //Si deja en blanco su nombre, se resta un intento y vuelve a intentar
                 if (nombreUsuario.equals(""))
@@ -36,18 +39,38 @@ public class main
                     JOptionPane.showMessageDialog(null, "No dejes el nombre en blanco, "
                             + "intenta nuevamente\n" + "Te quedan " + intentos + " intentos",
                             "Campo no completado", JOptionPane.ERROR_MESSAGE);
-                }
+                }   
             }
             //Si no se acabó los intentos y llenó el campo, se finaliza el ciclo
             while(intentos != 0 && nombreUsuario.equals("")); 
             
             //Si el usuario se acabó sus intentos disponibles, lanza una excepción
             if (intentos == 0)
-            {throw new Exception("Nombre no completado");}  
+            {throw new Exception("Nombre no completado");}
+            
+            //Una vez que se agregó el nombre, se llama al método menu para mostrar las funciones disponibles
+            menu(nombreUsuario);
+            
+            //Se guardan los resultados en el archivo .csv
+            directorio.save();
+            
+            //Se agrega una línea para mejor visibilidad
+            System.out.println();
+            
+            //Se muestran los contactos guardados al usuario
+            directorio.load();
+            
+            
+            //Despedida al usuario por correcta ejecución del programa
+            System.out.println("El programa se ha terminado con éxito. Nos vemos pronto"
+                    + ", " + nombreUsuario + " :)\n");
         }
         //Capta cualquier excepción que surga durante la ejecución
         catch(Exception e)
-        {System.out.println("Se terminó el programa por la excepción: " + e + "");}
+        {
+            System.out.println("Se terminó el programa por la excepción: " + e);
+            System.out.println("Hasta pronto :)\n");
+        }
     }
     
     //Método menu: ayudará al usuario a elegir la opción que desea
@@ -58,9 +81,13 @@ public class main
             //Variables necesarias para el método
             //opciones: arreglo que guardará las opciones que se encuentran disponibles en el programa
             String [] opciones = {"Listar los contactos guardados", "Crear nuevos contactos",
-                "Eliminar un contacto existente", "Modificar un usuario existente", "Salir"};
+               "Eliminar un contacto existente", "Modificar un usuario existente", "Salir del menú"};
             //opcionElegida: le pide al usuario la acción que desea realizar con los contactos
             String opcionElegida;
+            //salir: le pide al usuario saber si desea salir o no del menú
+            int salir = 0;
+            //intentos: son el máximo de veces que se puede equivocar el usuario
+            int intentos = 3;
             
             //Se crea un ciclo do ... while para permitir al usuario realizar las funciones varias veces
             do
@@ -109,13 +136,36 @@ public class main
                         //Se termina el switch
                         break;
                     }
-                    case "Salir": //Sale del menú principal
+                }
+                
+                if(opcionElegida.equals("Salir del menú"))
+                {
+                    //Se pregunta al usuario si desea salir del menú
+                    salir = Integer.parseInt(JOptionPane.showInputDialog("¿Estás seguro de que deseas salir?\n"
+                            + "[1] SI\n[2] NO\n"));
+                    
+                    if (salir < 1 && salir > 2)
                     {
-                        //Se ll
+                        //Primero se resta el intento
+                        intentos -= 1;
+                        //Después se muestra un mensaje de advertencia al usuario con los intentos restantes
+                        JOptionPane.showMessageDialog(null, "Debes brindar una respuesta válida, "
+                                + "intenta nuevamente\n" + "Te quedan " + intentos + " intentos",
+                                "Confirmación no recibida", JOptionPane.ERROR_MESSAGE);
                     }
                 }
+                
+                //Se agrega una línea para mejor visibilidad
+                System.out.println();
+                
             }
-            while(!opcionElegida.equals("Salir"));
+            //Si eligió la opción de salir y no se acabó sus intentos, se ciera el ciclo
+            while(intentos != 0 && salir != 1);
+            
+            //Si el usuario se acabó sus intentos disponibles, lanza una excepción
+            if (intentos == 0)
+            {throw new Exception("La cantidad de errores permitida ha sido superada.");}
+            
         }
         catch(Exception e)
         {throw new Exception("Error en la ejecución del menú");}
