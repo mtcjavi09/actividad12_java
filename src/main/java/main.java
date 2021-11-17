@@ -24,7 +24,10 @@ public class main
             int intentos = 3;
             //directorio: objeto que ayudará a acceder a los métodos de la clase addressBook
             addressBook directorio = new addressBook();
-                
+            
+            //Se muestra en consola un mensaje explicando el programa
+            System.out.println("* * * * * * * * * * * * * BIENVENID@ * * * * * * * * * * * * *");
+            System.out.println("* * * Este programa guardará contactos en un archivo .csv * * *");
             //Se crea un ciclo para que el usuario ingrese su nombre de forma correcta
             do
             {
