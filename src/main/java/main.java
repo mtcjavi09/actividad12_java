@@ -19,7 +19,7 @@ public class main
         {
             //Se declaran las variables que se usarán en el método
             //nombreUsuario: guardará el nombre del usuario para tener una mayor personalización
-            String nombreUsuario;
+            String nombreUsuario = "";
             //intentos: le dará al usuario tres intentos para no dejar en blanco su nombre
             int intentos = 3;
             //directorio: objeto que ayudará a acceder a los métodos de la clase addressBook
@@ -28,9 +28,9 @@ public class main
             //Se crea un ciclo para que el usuario ingrese su nombre de forma correcta
             do
             {
-                //Se pide el nombre del usuario
+                //Se pide el nombre del usuario y se pasa a mayúsculas para homogenizar
                 nombreUsuario = JOptionPane.showInputDialog("Bienvenid@ al directorio de contactos\n"
-                    + "Por favor, escribe tu nombre:");
+                    + "Por favor, escribe tu nombre:").toUpperCase();
                 //Si deja en blanco su nombre, se resta un intento y vuelve a intentar
                 if (nombreUsuario.equals(""))
                 {
@@ -48,28 +48,25 @@ public class main
             if (intentos == 0)
             {throw new Exception("Nombre no completado");}
             
-            //Una vez que se agregó el nombre, se llama al método menu para mostrar las funciones disponibles
-            menu(nombreUsuario);
-            
-            //Se guardan los resultados en el archivo .csv
-            directorio.save();
+            //Mensaje de bienvenida para el usuario
+            System.out.println("Bienvenid@ a tu directorio de contactos, " + nombreUsuario + " :)");
             
             //Se agrega una línea para mejor visibilidad
             System.out.println();
-            
-            //Se muestran los contactos guardados al usuario
-            directorio.load();
-            
+        
+            //Una vez que se agregó el nombre, se llama al método menu para mostrar las funciones disponibles
+            menu(nombreUsuario);
             
             //Despedida al usuario por correcta ejecución del programa
             System.out.println("El programa se ha terminado con éxito. Nos vemos pronto"
                     + ", " + nombreUsuario + " :)\n");
+            
         }
         //Capta cualquier excepción que surga durante la ejecución
         catch(Exception e)
         {
-            System.out.println("Se terminó el programa por la excepción: " + e);
-            System.out.println("Hasta pronto :)\n");
+            System.out.println("Causa del error: " + e);
+            System.out.println("Se ha terminado el programa. Hasta pronto. :)\n");
         }
     }
     
@@ -84,20 +81,19 @@ public class main
                "Eliminar un contacto existente", "Modificar un usuario existente", "Salir del menú"};
             //opcionElegida: le pide al usuario la acción que desea realizar con los contactos
             String opcionElegida;
-            //salir: le pide al usuario saber si desea salir o no del menú
-            int salir = 0;
             //intentos: son el máximo de veces que se puede equivocar el usuario
             int intentos = 3;
-            
+            //salir: le pide al usuario saber si desea salir o no del menú
+            int salir = 0;
+            //directorio: objeto que ayudará a acceder a los métodos de la clase addressBook
+            addressBook directorio = new addressBook();
+
             //Se crea un ciclo do ... while para permitir al usuario realizar las funciones varias veces
             do
             {
-                opcionElegida = (String) JOptionPane.showInputDialog(null, "¡Hola! " + nombreUsuario + 
+                opcionElegida = (String) JOptionPane.showInputDialog(null, nombreUsuario + 
                         " por favor, selecciona la opción que deseas", "Menú principal", JOptionPane.DEFAULT_OPTION, 
                         null, opciones, opciones[0]);
-                //directorio: objeto que ayudará a acceder a los métodos de la clase addressBook
-                addressBook directorio = new addressBook();
-
 
                 //Se le notifica al usuario la opción que eligió
                 System.out.println("Elegiste: " + opcionElegida);
@@ -114,11 +110,8 @@ public class main
                     }
                     case "Crear nuevos contactos": //Se crean contactos y se guardan en el HashMap
                     {
-                        //Se pide al usuario cuántos contactos desea ingresar
-                        int cantidadContactos = Integer.parseInt(JOptionPane.showInputDialog(
-                                "Ingresa el número de contactos que deseas agregar: "));
                         //Se llama al método create
-                        directorio.create(cantidadContactos);
+                        directorio.create();
                         //Se termina el switch
                         break;
                     }
@@ -136,38 +129,41 @@ public class main
                         //Se termina el switch
                         break;
                     }
-                }
-                
-                if(opcionElegida.equals("Salir del menú"))
-                {
-                    //Se pregunta al usuario si desea salir del menú
-                    salir = Integer.parseInt(JOptionPane.showInputDialog("¿Estás seguro de que deseas salir?\n"
-                            + "[1] SI\n[2] NO\n"));
-                    
-                    if (salir < 1 && salir > 2)
+                    case "Salir del menú": //El usuario ha decidido salir del menú
                     {
-                        //Primero se resta el intento
-                        intentos -= 1;
-                        //Después se muestra un mensaje de advertencia al usuario con los intentos restantes
-                        JOptionPane.showMessageDialog(null, "Debes brindar una respuesta válida, "
-                                + "intenta nuevamente\n" + "Te quedan " + intentos + " intentos",
-                                "Confirmación no recibida", JOptionPane.ERROR_MESSAGE);
+                        //Se pregunta al usuario si está seguro de salir del menú
+                        salir = Integer.parseInt(JOptionPane.showInputDialog("¿Estás seguro de que deseas salir?\n"
+                                + "[1] SI\n[2] NO\n"));
+
+                        if (salir < 1 && salir > 2)
+                        {
+                            //Primero se resta el intento
+                            intentos -= 1;
+                            //Después se muestra un mensaje de advertencia al usuario con los intentos restantes
+                            JOptionPane.showMessageDialog(null, "Debes brindar una respuesta válida, "
+                                    + "intenta nuevamente\n" + "Te quedan " + intentos + " intentos",
+                                    "Confirmación no recibida", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
-                
-                //Se agrega una línea para mejor visibilidad
-                System.out.println();
-                
             }
             //Si eligió la opción de salir y no se acabó sus intentos, se ciera el ciclo
             while(intentos != 0 && salir != 1);
-            
+                    
             //Si el usuario se acabó sus intentos disponibles, lanza una excepción
             if (intentos == 0)
             {throw new Exception("La cantidad de errores permitida ha sido superada.");}
             
+            //Se agrega una línea para mejor visibilidad
+            System.out.println();
+            
+            //Se guardan los resultados en el archivo .csv
+            directorio.save();
+            
+            //Se muestran los contactos guardados al usuario
+            directorio.load();
         }
         catch(Exception e)
-        {throw new Exception("Error en la ejecución del menú");}
+        {System.out.println("Excepción encontrada: " + e + "\nFinalizando programa...");}
     }
 }
